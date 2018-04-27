@@ -16,7 +16,7 @@ class Contact extends Component {
     }
 
     componentWillMount() {
-        SyncStorage.set('type', 'userscontact');
+        // SyncStorage.set('type', 'userscontact');
     }
 
     render() {

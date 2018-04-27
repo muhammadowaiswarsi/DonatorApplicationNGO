@@ -20,7 +20,7 @@ class Users extends Component {
     }
 
     componentWillMount() {
-        SyncStorage.set('type', 'ngousers');
+        // SyncStorage.set('type', 'ngousers');
         this.props.users()
     }
 
@@ -44,9 +44,6 @@ class Users extends Component {
                                         <Text>{value.username}</Text>
                                         <Text note>{value.contact}</Text>
                                     </Body>
-                                    <Button onPress={this.view}>
-                                        <Text> View</Text>
-                                    </Button>
                                 </Left>
                             </CardItem>
                         </Card>

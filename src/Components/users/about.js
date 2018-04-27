@@ -16,7 +16,7 @@ class About extends Component {
     }
 
     componentWillMount() {
-        SyncStorage.set('type', 'usersabout');
+        // SyncStorage.set('type', 'usersabout');
     }
 
     render() {

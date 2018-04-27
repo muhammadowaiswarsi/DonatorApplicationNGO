@@ -32,6 +32,8 @@ class notloghome extends Component {
 
 
     render() {
+        console.log(this.props.requirmentpost1)
+
         return (
             <View>
 
@@ -55,10 +57,11 @@ class notloghome extends Component {
                     <View style={{ marginBottom: '17%' }}>
                         {this.props.requirmentpost1.map((value, index) => {
                             let uid = value.uid
+                            let donationCircle = Math.floor((value.donation / value.requirementmoney) * 100);
                             return <Card key={index} style={styles.container}>
                                 <CardItem>
                                     <Left>
-                                        <Icon name='contact' />
+                                        <Icon name='contact' style={{fontSize: 40}}/>
                                         <Body>
                                             <Text>{value.name}</Text>
                                             <Text note>{value.date}</Text>
@@ -67,7 +70,7 @@ class notloghome extends Component {
 
                                     <Right>
                                         <View>
-                                            <PercentageCircle radius={25} percent={50} color={"#3498db"} ></PercentageCircle>
+                                            <PercentageCircle radius={25} percent={donationCircle} color={"#3498db"} ></PercentageCircle>
                                         </View>
                                     </Right>
                                 </CardItem>
@@ -76,7 +79,7 @@ class notloghome extends Component {
                                 <CardItem>
                                     <Body>
                                         <Text>
-                                            {value.requirements} it is required {value.moneyrequirements}
+                                            {value.requirement} it is required {value.requirementmoney}
                                         </Text>
                                     </Body>
                                 </CardItem>
@@ -94,12 +97,12 @@ class notloghome extends Component {
                                     <Body>
                                         <Button transparent style={{ width: '120%', marginLeft: '-10%' }} onPress={() => this.comment(uid, index)}>
                                             <Icon name="chatbubbles" />
-                                            <Text>Comments</Text>
+                                            <Text style={{marginRight : '8%'}}>Comments</Text>
                                         </Button>
                                     </Body>
 
 
-                                    <Right>
+                                    <Right style={{marginRight : '-5%'}}>
                                         <Button transparent onPress={() => alert('Please Login')}>
                                             <Text>
                                                 Donate
@@ -131,7 +134,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProp(state) {
     return ({
-        signin1: state.root.signin,
+        // signin1: state.root.signin,
         requirmentpost1: state.root.requirmentpost,
         requirmentpostkeys1: state.root.requirmentpostkeys,
 
@@ -139,7 +142,6 @@ function mapStateToProp(state) {
 }
 function mapDispatchToProp(dispatch) {
     return {
-        // signout: () => { dispatch(logOutNow()) }
         commentcomponent: (uid, comment) => { dispatch(commentcomponent(uid, comment)) },
         getdata: () => { dispatch(getdatapost()) },
 

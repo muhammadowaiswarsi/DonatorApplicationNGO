@@ -42,24 +42,32 @@ class Main extends Component {
     }
 
     save = () => {
+        this.popupDialog.dismiss();
+        Keyboard.dismiss()
+        let donation1 = this.state.donation
+        let requirementmoney = this.props.donationmoneyindex1.requirementmoney
+        let donatedmoney = this.props.donationmoneyindex1.donation
         let index = this.props.donationmoneyindex1.index
         let pushkey = this.props.requirmentpostkeys1[index]
         let uid = this.props.donationmoneyindex1.uid
-        let donation1 = this.state.donation
-        console.log(index)
-        console.log(this.props.requirmentpostkeys1)
+        let money = Number(requirementmoney) - Number(donatedmoney)
         let currentuser = this.props.signin1.username
         let currentuseruid = this.props.signin1.uid
-        if (donation1 !== null) {
-            this.props.donationmoney(uid, pushkey, donation1, currentuser, currentuseruid)
+        if (donation1) {
+            if (donation1 > money) {
+                alert('thats too much You give max :' + money + 'for donate')
+            } else {
+                this.props.donationmoney(uid, pushkey, donation1, currentuser, currentuseruid)
+                this.setState({
+                    donation: ''
+                })
+            }
         } else {
             alert('Please Donate Some money')
+            this.setState({
+                donation: ''
+            })
         }
-        this.popupDialog.dismiss();
-        Keyboard.dismiss()
-        this.setState({
-            donation: ''
-        })
     }
 
 
@@ -70,11 +78,11 @@ class Main extends Component {
 
     showPopup = () => {
         this.popupDialog.show()
-        // alert('hello')
     };
 
 
     render() {
+        console.log(this.props.signin1)
         console.log(this.props.requirmentpostkeys1)
         return (
             <Container>
@@ -87,7 +95,7 @@ class Main extends Component {
                     ref={(popupDialog) => { this.popupDialog = popupDialog; }}>
                     <View style={{ margin: 10 }}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Selected Cash Option</Text>
-                        <Text style={{ marginTop: '5%', textAlign: 'center' }}>estimated cost 6000, please enter your donation amount</Text>
+                        <Text style={{ marginTop: '5%', textAlign: 'center' }}>estimated cost {this.props.donationmoneyindex1.requirementmoney}, please enter your donation amount</Text>
                         <TextInput style={{ marginTop: '10%' }} value={this.state.donation} keyboardType='numeric' name='donation' placeholder='please enter the amount' onChangeText={donation => this.setState({ donation: donation.trim() })} />
                         <Right>
                             <Button style={{ marginLeft: '65%' }} transparent={true} onPress={this.save}><Text style={{ color: 'black' }}>Save</Text></Button>

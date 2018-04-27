@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Keyboard } from 'react-native';
+import { StyleSheet, View, Keyboard, ScrollView } from 'react-native';
 import CustomHeader from './header';
 import { connect } from 'react-redux';
 import { getcomments, commentsend } from '../store/actions';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text, Icon, Button, Footer, FooterTab, Item, Input } from 'native-base';
+import * as firebase from 'firebase';
+
 
 class Comments extends Component {
     constructor() {
@@ -21,37 +23,42 @@ class Comments extends Component {
     componentWillMount() {
         let uid = this.props.postcomment1.uid;
         let pushkey = this.props.postcomment1.pushkey
+        console.log(uid)
+        console.log(pushkey)
         this.props.getcomments(uid, pushkey)
     };
 
 
     sendComment = () => {
-        if (this.props.signin1 === '') {
-            alert('Please Login')
-        } else {
-            if (this.state.comment === null) {
-                alert('Please Write Something')
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                if (this.state.comment === '') {
+                    alert('Please Write Something')
+                } else {
+                    let comment = this.state.comment
+                    this.setState({
+                        comment: ''
+                    })
+                    let data = this.props.signin1
+                    let uid = this.props.postcomment1.uid
+                    let pushkey = this.props.postcomment1.pushkey
+                    this.props.commentsend(uid, pushkey, comment, data)
+                    Keyboard.dismiss()
+                }
             } else {
-                let comment = this.state.comment
-                this.setState({
-                    comment: ''
-                })
-                let data = this.props.signin1
-                let uid = this.props.postcomment1.uid
-                let pushkey = this.props.postcomment1.pushkey
-                this.props.commentsend(uid, pushkey, comment, data)
-                Keyboard.dismiss()
+                alert('Please Login')
             }
-        }
+
+        });
     }
 
 
     render() {
         console.log(this.props.commentdata1)
+        console.log(this.props.signin1)
         return (
             <Container>
-                <Content>
-
+                <View>
                     <Header style={{ height: 60, width: '100%' }}>
                         <Left>
                             <Button style={{ width: '140%' }} transparent>
@@ -64,34 +71,40 @@ class Comments extends Component {
                             </Button>
                         </Right>
                     </Header>
+                </View>
 
-                    {this.props.commentcomp1 ?
-                        <Content>
-                            <Text style={styles.BodyText}>{this.props.commentcomp1.requirements}-</Text>
-                        </Content>
-                        : null}
-                    {
-                        this.props.commentdata1 ?
-                            this.props.commentdata1.map((value, index) => {
-                                return <Content key={index}>
-                                    <List>
-                                        <ListItem avatar>
-                                            <Icon style={{ fontSize: 40 }} name='contact' />
-                                            <Body style={{ minHeight: 70, height: 'auto' }}>
-                                                <Text style={{ color: 'blue', fontWeight: 'bold' }}>
-                                                    {value.username}
-                                                </Text>
-                                                <Text>
-                                                    {value.comment}
-                                                </Text>
-                                            </Body>
 
-                                        </ListItem>
-                                    </List>
-                                </Content>
-                            }) : null
-                    }
+                <Content>
+                    <View>
+                        {this.props.commentcomp1 ?
+                            <Content>
+                                <Text style={styles.BodyText}>{this.props.commentcomp1.requirement}</Text>
+                            </Content>
+                            : null}
+                        {
+                            this.props.commentdata1 ?
+                                this.props.commentdata1.map((value, index) => {
+                                    return <Content key={index}>
+                                        <List>
+                                            <ListItem avatar>
+                                                <Icon style={{ fontSize: 40 }} name='contact' />
+                                                <Body style={{ minHeight: 70, height: 'auto' }}>
+                                                    <Text style={{ color: 'blue', fontWeight: 'bold' }}>
+                                                        {value.username}
+                                                    </Text>
+                                                    <Text>
+                                                        {value.comment}
+                                                    </Text>
+                                                </Body>
+
+                                            </ListItem>
+                                        </List>
+                                    </Content>
+                                }) : null
+                        }
+                    </View>
                 </Content>
+
                 <Item style={{ width: '100%', height: 70 }} regular>
                     <Input
                         numberOfLines={2} value={this.state.comment}

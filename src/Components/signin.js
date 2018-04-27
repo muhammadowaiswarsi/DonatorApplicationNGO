@@ -33,7 +33,7 @@ class Signin extends Component {
     }
 
     signin = () => {
-        if (this.state.email === '' || this.state.password) {
+        if (this.state.email === '' || this.state.password === '') {
             alert('Please Write Correct Email or Password')
         } else {
             this.setState({
@@ -81,9 +81,14 @@ class Signin extends Component {
                             </Button >
                         </View>
 
-                        <Text onPress={() => Actions.Signup()} style={{ fontSize: 20, textDecorationLine: "underline", marginTop: '4%' }}>
-                            For Signup Click Here!!
+
+                        <View>
+                            <Text onPress={() => Actions.Signup()} style={{ fontSize: 20, textDecorationLine: "underline", marginTop: '6%' }}>
+                                For Signup Click Here!!
                             </Text>
+                        </View>
+
+
                     </View >
 
                     :
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         paddingBottom: 255,
-        paddingTop : '20%' 
+        paddingTop: '20%'
     },
     body: {
         flex: 1,

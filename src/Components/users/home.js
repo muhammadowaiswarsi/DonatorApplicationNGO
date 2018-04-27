@@ -3,7 +3,7 @@ import { Modal, View, TouchableHighlight, ScrollView, StyleSheet, Alert } from '
 import CustomHeader from '../header';
 import { Input, ActionSheet, Container, Header, Content, Card, CardItem, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux'; // New code
-import { commentcomponent, like, getdatapost, logOutNow, SiginNow, dontionmoneyindex } from '../../store/actions'
+import { likethumbs, commentcomponent, like, getdatapost, logOutNow, SiginNow, dontionmoneyindex } from '../../store/actions'
 import { connect } from 'react-redux';
 import PercentageCircle from 'react-native-percentage-circle';
 import SyncStorage from 'sync-storage';
@@ -17,8 +17,8 @@ class Home extends Component {
         this.state = {
             money: '',
             donation: '',
-            modalVisible: false
-
+            modalVisible: false,
+            likestate: 'thumbs-up'
         }
     }
 
@@ -28,8 +28,9 @@ class Home extends Component {
 
 
     like = (uid, index) => {
+        let name = this.props.signin1.username
         let key = this.props.requirmentpostkeys1[index]
-        this.props.like(uid, key)
+        this.props.like(uid, key, name)
     }
 
 
@@ -45,106 +46,117 @@ class Home extends Component {
 
 
     componentWillMount() {
-        this.props.getdata()
+        this.props.getdata();
+        // this.props.likethumbs()
     }
 
     render() {
         var BUTTONS = ['via Product',
-            <Text onPress={() => { 'Cancel', this.props.showPopup(); }}>via Cheque / Cash</Text>,
-            // 'via Cheque / Cash',
+            <Text onPress={() => { this.props.showPopup(), CANCEL_INDEX; }}>via Cheque / Cash</Text>,
             'via Online Payment',
             'On Donate Page', "Cancel"];
-        var DESTRUCTIVE_INDEX = 1;
-        var CANCEL_INDEX = 1;
+        var DESTRUCTIVE_INDEX = 3;
+        var CANCEL_INDEX = 4;
 
-        console.log(this.props.signin1)
-        console.log(this.props.donationmoney1)
+        // console.log(this.props.signin1)
+        // console.log(this.props.donationmoney1)
+        console.log(this.props.requirmentpost1)
+
         return (
             <View >
                 <Container style={{ height: 'auto' }}>
-                    {this.props.requirmentpost1.map((value, index) => {
-                        let uid = value.uid
-                        // let amount = value.moneyrequirements
-                        let donationmoney = []
-                        for (let key in requirmentpost1) {
-                            donationmoney.push(requirmentpost1[key].donation)
-                        }
-                        return <Card key={index} style={styles.container}>
-                            <CardItem>
-                                <Left>
-                                    <Icon name='contact' />
+
+                    {this.props.requirmentpost1 ?
+                        this.props.requirmentpost1.map((value, index) => {
+                            let donationCircle = Math.floor((value.donation / value.requirementmoney) * 100);
+                            let uid = value.uid
+                            let likesk = value.likedata
+                            console.log(likesk)
+                            // console.log("idddddd",value&&value.likedata&&value.likedata[this.props.signin1.uid]?true:false)
+                            var likesthumb = null
+                            for (let key in likesk) {
+                                console.log(likesk[key].uid)
+                                let likethumbs = likesk[key].uid
+                                if (likethumbs !== this.props.signin1.uid) {
+                                    likesthumb = 'thumbs-up'
+                                }
+                                else  {
+                                    //  alert();
+                                    likesthumb = 'thumbs-down'
+                                }
+                            }
+
+                            return <Card key={index} style={styles.container}>
+                                <CardItem>
+                                    <Left>
+                                        <Icon name='contact' />
+                                        <Body>
+                                            <Text>{value.name}</Text>
+                                            <Text note>{value.date}</Text>
+                                        </Body>
+                                    </Left>
+
+                                    <Right>
+                                        <View>
+                                            <PercentageCircle radius={25} percent={donationCircle} color={"#3498db"} ></PercentageCircle>
+                                        </View>
+                                    </Right>
+                                </CardItem>
+
+
+                                <CardItem>
                                     <Body>
-                                        <Text>{value.name}</Text>
-                                        <Text note>{value.date}</Text>
+                                        <Text>
+                                            {value.requirement} it is required {value.requirementmoney}
+                                        </Text>
                                     </Body>
-                                </Left>
-
-                                <Right>
-                                    <View>
-                                        {/* {this.props.donationmoney1.map((value, index) => { */}
-                                        {/* // let donationCircle = Math.floor((value.donationAmount / amount) * 100); */}
-                                        {/* console.log(donationCircle) */}
-                                        {/* return  */}
-                                        <PercentageCircle radius={25} percent={donationCircle} color={"#3498db"} ></PercentageCircle>
-                                        {/* })} */}
-                                    </View>
-                                </Right>
-                            </CardItem>
+                                </CardItem>
 
 
-                            <CardItem>
-                                <Body>
-                                    <Text>
-                                        {value.requirements} it is required {value.moneyrequirements}
-                                    </Text>
-                                </Body>
-                            </CardItem>
+                                <CardItem>
+                                    <Left>
+                                        <Button transparent onPress={() => this.like(uid, index)}>
+                                        {/* {alert(likesthumb)} */}
+                                            <Icon name={value&&value.likedata&&value.likedata[this.props.signin1.uid]?'thumbs-down':'thumbs-up'} />
+                                            <Text>{value.likes}</Text>
+                                        </Button>
+                                    </Left>
 
 
-                            <CardItem>
-                                <Left>
-                                    <Button transparent onPress={() => this.like(uid, index)}>
-                                        <Icon active name="thumbs-up" />
-                                        <Text>{value.likes}</Text>
-                                    </Button>
-                                </Left>
+                                    <Body>
+                                        <Button transparent style={{ width: '120%', marginLeft: '-5%' }} onPress={() => this.comment(uid, index)}>
+                                            <Icon active name="chatbubbles" />
+                                            <Text>Comments</Text>
+                                        </Button>
+                                    </Body>
 
 
-                                <Body>
-                                    <Button transparent style={{ width: '120%', marginLeft: '-5%' }} onPress={() => this.comment(uid, index)}>
-                                        <Icon active name="chatbubbles" />
-                                        <Text>Comments</Text>
-                                    </Button>
-                                </Body>
-
-
-                                <Right>
-                                    <Button transparent style={{ marginRight: '-12%' }}
-                                        onPress={() =>
-                                            ActionSheet.show(
-                                                {
-                                                    options: BUTTONS,
-                                                    cancelButtonIndex: CANCEL_INDEX,
-                                                    destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                                                    title: "Please Select Option"
-                                                },
-                                                buttonIndex => {
-                                                    this.setState({ clicked: BUTTONS[buttonIndex] })
-                                                }, this.setState({ money: value.moneyrequirements })
-                                            )}
-                                    >
-                                        <Text onPress={() => { this.props.dontionmoneyindex(uid, index) }}>Donate</Text>
-                                    </Button>
-                                </Right>
-                            </CardItem>
-
-                        </Card>
-                    })
+                                    <Right>
+                                        <Button transparent style={{ marginRight: '-12%' }}
+                                            onPress={() =>
+                                                ActionSheet.show(
+                                                    {
+                                                        options: BUTTONS,
+                                                        cancelButtonIndex: CANCEL_INDEX,
+                                                        destructiveButtonIndex: DESTRUCTIVE_INDEX,
+                                                        title: "Please Select Option"
+                                                    },
+                                                    buttonIndex => {
+                                                        this.setState({ clicked: BUTTONS[buttonIndex] })
+                                                    }, this.props.dontionmoneyindex(uid, index, value.requirementmoney, value.donation), this.setState({ money: value.moneyrequirements, donatedmoney: value.donation })
+                                                )}
+                                        >
+                                            <Text>Donate</Text>
+                                        </Button>
+                                    </Right>
+                                </CardItem>
+                            </Card>
+                        })
+                        : null
                     }
 
-                </Container >
 
-
+                </Container>
 
             </View >
         )
@@ -173,9 +185,10 @@ function mapDispatchToProp(dispatch) {
     return {
         signout: () => { dispatch(logOutNow()) },
         getdata: () => { dispatch(getdatapost()) },
-        like: (uid, key) => { dispatch(like(uid, key)) },
+        like: (uid, key, name) => { dispatch(like(uid, key, name)) },
         commentcomponent: (uid, comment) => { dispatch(commentcomponent(uid, comment)) },
-        dontionmoneyindex: (uid, index) => { dispatch(dontionmoneyindex(uid, index)) }
+        dontionmoneyindex: (uid, index, requirementmoney, donation) => { dispatch(dontionmoneyindex(uid, index, requirementmoney, donation)) },
+        // likethumbs: () => { dispatch(likethumbs()) }
     };
 }
 

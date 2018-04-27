@@ -35,7 +35,7 @@ class Ngo extends Component {
         console.log(this.props.ngodata1)
         return (
 
-            <Container>
+            <View>
 
                 {
                     this.props.ngodata1 ?
@@ -48,15 +48,12 @@ class Ngo extends Component {
                                             <Text>{value.username}</Text>
                                             <Text note>{value.contact}</Text>
                                         </Body>
-                                        <Button onPress={this.view}>
-                                            <Text> View</Text>
-                                        </Button>
                                     </Left>
                                 </CardItem>
                             </Card>
                         }) : null
                 }
-            </Container>
+            </View>
         )
     }
 }

@@ -2,7 +2,6 @@ import ActionTypes from '../constant/constant';
 import * as firebase from 'firebase';
 import { Actions } from 'react-native-router-flux'; // New code
 import { InteractionManager } from 'react-native'
-// import history from '../../history'
 
 
 
@@ -29,8 +28,7 @@ export function SignupNow(data) {
                     firebase.database().ref(`/users/donator/${user.uid}/`).set(dataobj)
                         .then(() => {
                             console.log(dataobj)
-                            Actions.Signin()
-                            // history.push('/donator')
+                            Actions.main()
                             console.log(dataobj)
                         })
                 } else if (data.ngo === true) {
@@ -43,11 +41,11 @@ export function SignupNow(data) {
                     }
                     console.log(dataobj)
 
-                    firebase.database().ref(`/users/ngo/${user.uid}/`).set(dataobj)
+                    firebase.database().ref(`/admin/ngorequest/${user.uid}/`).set(dataobj)
                         .then(() => {
                             console.log(dataobj)
-                            Actions.Signin()
-                            // history.push('/ngo')
+                            alert('Your request is forward to admin Please wait')
+                            Actions.NotLogHome()
                             console.log(dataobj)
                         })
                 }
@@ -73,7 +71,7 @@ export function SiginNow(data) {
                         .then((data1) => {
                             console.log(data1.val())
                             let dbdata = data1.val()
-                            if (dbdata !== null) {
+                            if (dbdata) {
                                 Actions.main()
                                 dispatch({ type: ActionTypes.SIGNIN, payload: dbdata });
                             }
@@ -82,11 +80,23 @@ export function SiginNow(data) {
                                     .then((data2) => {
                                         console.log(data2.val())
                                         let dbdata = data2.val()
-                                        if (dbdata !== null) {
+                                        if (dbdata) {
                                             Actions.main1()
                                             dispatch({ type: ActionTypes.SIGNIN, payload: dbdata });
                                         } else {
-                                            alert('user not found')
+                                            firebase.database().ref(`admin/ngorequest/${userid}/`).once('value')
+                                                .then((data3) => {
+                                                    console.log(data3.val())
+                                                    let dbdata = data3.val()
+                                                    if (dbdata) {
+                                                        alert('Please Wait Your request is in pending')
+                                                        Actions.NotLogHome()
+                                                    }
+                                                    else {
+                                                        alert('user not found')
+                                                        user.delete()
+                                                    }
+                                                })
                                         }
                                     })
                             }
@@ -97,8 +107,6 @@ export function SiginNow(data) {
                 }
             }
             )
-        // });
-
     }
 }
 
@@ -109,28 +117,23 @@ export function LOGIN() {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 let uid = user.uid
-                firebase.database().ref(`/users/donator/`).on('value', snap => {
-                    let dbdata = snap.val()
-                    for (let key in dbdata) {
-                        if (uid === key) {
+                console.log(uid)
+                firebase.database().ref(`/users/donator/${uid}/`).once('value')
+                    .then((snap) => {
+                        let dbdata = snap.val()
+                        if (dbdata) {
                             Actions.main()
-                            firebase.database().ref(`/users/donator/${uid}`).once('value')
-                                .then((data) => {
-                                    let dbdata = data.val()
-                                    console.log(dbdata)
-                                    dispatch({ type: ActionTypes.SIGNIN, payload: dbdata });
-                                })
+                            dispatch({ type: ActionTypes.SIGNIN, payload: dbdata });
                         } else {
                             Actions.main1()
                             firebase.database().ref(`/users/ngo/${uid}/`).once('value')
                                 .then((data) => {
-                                    // console.log(data.val())
-                                    let dbdata = data.val()
-                                    dispatch({ type: ActionTypes.SIGNIN, payload: dbdata });
+                                    let dbdata1 = data.val()
+                                    console.log(dbdata1)
+                                    dispatch({ type: ActionTypes.SIGNIN, payload: dbdata1 });
                                 })
                         }
-                    }
-                })
+                    })
             } else {
                 Actions.NotLogHome()
             }
@@ -141,48 +144,39 @@ export function LOGIN() {
 
 export function requirmentdata(req) {
     return dispatch => {
-        // InteractionManager.runAfterInteractions(() => {
 
         console.log(req)
-        console.log(req.uid)
-        console.log(req.uid.uid)
+        console.log(req.uid)//currentuser
 
-        firebase.database().ref(`/users/ngo/${req.uid.uid}/`).once('value')
-            .then((data) => {
-                console.log(data.val())
-                console.log('datalaya')
+        if (req) {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            let date = new Date();
+            let dd = date.getDate().toString();
+            let m = date.getMonth() + 1.; //January is 0!
+            let mm = monthNames[m];
+            let yyyy = date.getFullYear().toString();
 
-                let dbdata = data.val()
+            let finalDate = mm + ' ' + dd + ',' + yyyy
 
-                const monthNames = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ];
-                let date = new Date();
-                let dd = date.getDate().toString();
-                let m = date.getMonth() + 1.; //January is 0!
-                let mm = monthNames[m];
-                let yyyy = date.getFullYear().toString();
+            let counter = 0;
 
-                let finalDate = mm + ' ' + dd + ',' + yyyy
+            let obj = {
+                name: req.username,
+                uid: req.uid,
+                requirement: req.requirement,
+                requirementmoney: req.requirementmoney,
+                date: finalDate.toString(),
+                likes: counter,
+                likedata: '',
+                comments: '',
+                donation: counter,
+            }
+            console.log(obj)
 
-                let counter = 0;
-
-                let obj = {
-                    name: dbdata.username,
-                    uid: dbdata.uid,
-                    requirements: req.requirements,
-                    moneyrequirements: req.moneyrequirments,
-                    date: finalDate.toString(),
-                    likes: counter,
-                    likedata: '',
-                    comments: ''
-                }
-                console.log(obj)
-
-                // console.log('obj')
-                firebase.database().ref(`/users/ngo/${req.uid.uid}/post/`).push(obj)
-            });
-        // })
+            firebase.database().ref(`/admin/ngospostrequest/${req.uid}/`).push(obj)
+        }
     }
 }
 
@@ -230,41 +224,29 @@ export function getusers() {
 
 export function getdatapost() {
     return dispatch => {
-        // InteractionManager.runAfterInteractions(() => {
         firebase.database().ref(`/users/ngo/`).on('value', data => {
-            // console.log(data.val())
             let dbdata = data.val()
             let dataarr = [];
             let pushkey = [];
             let postarr = [];
-            // let donationmoney = []
             for (let key in dbdata) {
                 dataarr.push(dbdata[key])
                 let post = dbdata[key].post
                 for (let key1 in post) {
                     pushkey.push(key1)
                     postarr.push(post[key1])
-                    // let donation = (post[key1].donation)
-                    // for (let key in donation){
-                    // donationmoney.push(donation)
-                    // }
                 }
             }
-            // console.log('getdatapost')
-            // console.log(dataarr)
             console.log(postarr)
-            // console.log(donationmoney)
-            // console.log(pushkey)
+            console.log(pushkey)
             dispatch({ type: ActionTypes.REQUIRMENTPOSTKEYS, payload: pushkey });
             dispatch({ type: ActionTypes.REQUIRMENTPOST, payload: postarr });
-            // dispatch({ type: ActionTypes.DONATIONMONEY, payload: donationmoney });
         })
-        // })
     }
 }
 
 
-export function like(uid, pushkey) {
+export function like(uid, pushkey, name) {
     return dispatch => {
         // InteractionManager.runAfterInteractions(() => {
         console.log(pushkey)
@@ -283,7 +265,7 @@ export function like(uid, pushkey) {
                                 bool = true;
                                 break;
                             }
-                            console.log(uids)
+                            // console.log(uid)
                         }
                     }
                     if (bool) {
@@ -297,6 +279,7 @@ export function like(uid, pushkey) {
                                 let likedata1 = dbdata.likedata
                                 console.log(likedata1)
                                 firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).remove()
+                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/${currentuser.uid}`).remove()
                             })
                     } else {
                         firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
@@ -305,8 +288,13 @@ export function like(uid, pushkey) {
                                 let dbdata = data2.val()
                                 let oldlike = dbdata.likes
                                 console.log(oldlike)
+                                let obj = {
+                                    name: name,
+                                    uid: currentuser.uid
+                                }
                                 firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike + 1 })
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).set('uid')
+                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).set(obj)
+                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/${currentuser.uid}`).set(obj)
                             })
                     }
                 }
@@ -317,6 +305,26 @@ export function like(uid, pushkey) {
 }
 
 
+
+// export function likethumbs() {
+//     return dispatch => {
+//         firebase.database().ref(`/users/ngo/`).on('value', data => {
+//             let dbdata = data.val()
+//             let dataarr = [];
+//             // let pushkey = [];
+//             // let postarr = [];
+//             for (let key in dbdata) {
+//                 dataarr.push(dbdata[key])
+//                 let post = dbdata[key].post
+//                 for (let key1 in post) {
+//                     let postdata = post[key1].likedata
+//                     console.log(postdata)
+// }
+// }
+// dispatch({ type: ActionTypes.REQUIRMENTPOST, payload: dataarr });
+// })
+// }
+// }
 
 
 export function commentcomponent(uid, pushkey) {
@@ -329,7 +337,7 @@ export function commentcomponent(uid, pushkey) {
         firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).on('value', snap => {
             let dbdata = snap.val()
             if (dbdata !== null) {
-                // console.log(dbdata)
+                console.log(dbdata)
                 dispatch({ type: ActionTypes.COMMENTBOX, payload: dbdata });
             } else {
                 dispatch({ type: ActionTypes.COMMENTBOX, payload: null });
@@ -359,28 +367,30 @@ export function getcomments(uid, pushkey) {
         firebase.database().ref(`users/ngo/${uid}/post/${pushkey}/comments/`).on('value', data => {
             let dbdata = data.val()
             console.log(dbdata)
-            if (dbdata !== null) {
+            let empty = []
+            if (dbdata) {
                 let comments = [];
                 for (let key in dbdata) {
                     let pushkey = dbdata[key]
                     comments.push(pushkey)
                     dispatch({ type: ActionTypes.COMMENTDATA, payload: comments });
                 }
-            }
-            else {
-                dispatch({ type: ActionTypes.COMMENTDATA, payload: null });
+            } else {
+                dispatch({ type: ActionTypes.COMMENTDATA, payload: empty });
             }
         })
     }
 }
 
 
-export function dontionmoneyindex(uid, index) {
+export function dontionmoneyindex(uid, index, requirementmoney, donation) {
     return dispatch => {
         console.log(index)
         let obj = {
             uid: uid,
-            index: index
+            index: index,
+            requirementmoney: requirementmoney,
+            donation: donation
         }
         dispatch({ type: ActionTypes.DONATIONMONEYINDEX, payload: obj });
     }
@@ -399,7 +409,18 @@ export function donationmoney(uid, pushkey, donation1, currentuser, currentuseru
             donatorName: currentuser,
             donatorUid: currentuseruid
         }
-        firebase.database().ref(`users/ngo/${uid}/post/${pushkey}/donation/`).push(obj)
+
+        firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
+            .then((data1) => {
+                console.log(data1.val())
+                let dbdata = data1.val()
+                let donation = dbdata.donation
+                console.log(donation)
+                let finalDonation = Number(donation) + Number(obj.donationAmount)
+                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ donation: finalDonation })
+
+                firebase.database().ref(`users/ngo/${uid}/post/${pushkey}/donationData/`).push(obj)
+            })
     }
 }
 

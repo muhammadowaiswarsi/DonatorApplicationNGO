@@ -3,7 +3,7 @@ import ActionTypes from '../constant/constant';
 const INITIAL_STATE = {
     signuperror: "",
     signinerror: "",
-    signin: '',
+    signin: [],
     ngodata: [],
     requirmentpost: [],
     requirmentpostkeys: [],
@@ -12,7 +12,7 @@ const INITIAL_STATE = {
     commentcomp: [],
     currentuser: '',
     postcomment: '',
-    commentdata: [],
+    commentdata: '',
     donationmoneyindex: '',
     donationmoney: []
 }

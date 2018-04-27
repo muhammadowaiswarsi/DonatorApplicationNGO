@@ -29,7 +29,7 @@ class Signup extends Component {
             contact: "",
             donator: true,
             ngo: false,
-            flag: false,
+            flag: true,
         }
     }
 
@@ -39,8 +39,8 @@ class Signup extends Component {
 
 
     signup = () => {
-        const { username, email, password, contact, donator, ngo } = this.state
-        if (username, email, password, contact, donator, ngo) {
+        // const { username, email, password, contact, donator, ngo } = this.state
+        if (this.state.username && this.state.email && this.state.password && this.state.contact) {
             this.setState({
                 flag: false
             })
