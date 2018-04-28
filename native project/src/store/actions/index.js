@@ -265,7 +265,6 @@ export function like(uid, pushkey, name) {
                                 bool = true;
                                 break;
                             }
-                            // console.log(uid)
                         }
                     }
                     if (bool) {
@@ -279,7 +278,6 @@ export function like(uid, pushkey, name) {
                                 let likedata1 = dbdata.likedata
                                 console.log(likedata1)
                                 firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).remove()
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/${currentuser.uid}`).remove()
                             })
                     } else {
                         firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
@@ -288,43 +286,16 @@ export function like(uid, pushkey, name) {
                                 let dbdata = data2.val()
                                 let oldlike = dbdata.likes
                                 console.log(oldlike)
-                                let obj = {
-                                    name: name,
-                                    uid: currentuser.uid
-                                }
                                 firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike + 1 })
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).set(obj)
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/${currentuser.uid}`).set(obj)
+                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).set(name)
                             })
                     }
                 }
                 )
         })
-        // })
     }
 }
 
-
-
-// export function likethumbs() {
-//     return dispatch => {
-//         firebase.database().ref(`/users/ngo/`).on('value', data => {
-//             let dbdata = data.val()
-//             let dataarr = [];
-//             // let pushkey = [];
-//             // let postarr = [];
-//             for (let key in dbdata) {
-//                 dataarr.push(dbdata[key])
-//                 let post = dbdata[key].post
-//                 for (let key1 in post) {
-//                     let postdata = post[key1].likedata
-//                     console.log(postdata)
-// }
-// }
-// dispatch({ type: ActionTypes.REQUIRMENTPOST, payload: dataarr });
-// })
-// }
-// }
 
 
 export function commentcomponent(uid, pushkey) {

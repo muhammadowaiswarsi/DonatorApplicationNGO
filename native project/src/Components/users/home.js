@@ -58,9 +58,7 @@ class Home extends Component {
         var DESTRUCTIVE_INDEX = 3;
         var CANCEL_INDEX = 4;
 
-        // console.log(this.props.signin1)
-        // console.log(this.props.donationmoney1)
-        console.log(this.props.requirmentpost1)
+        // console.log(this.props.requirmentpost1)
 
         return (
             <View >
@@ -70,21 +68,7 @@ class Home extends Component {
                         this.props.requirmentpost1.map((value, index) => {
                             let donationCircle = Math.floor((value.donation / value.requirementmoney) * 100);
                             let uid = value.uid
-                            let likesk = value.likedata
                             console.log(likesk)
-                            // console.log("idddddd",value&&value.likedata&&value.likedata[this.props.signin1.uid]?true:false)
-                            var likesthumb = null
-                            for (let key in likesk) {
-                                console.log(likesk[key].uid)
-                                let likethumbs = likesk[key].uid
-                                if (likethumbs !== this.props.signin1.uid) {
-                                    likesthumb = 'thumbs-up'
-                                }
-                                else  {
-                                    //  alert();
-                                    likesthumb = 'thumbs-down'
-                                }
-                            }
 
                             return <Card key={index} style={styles.container}>
                                 <CardItem>
@@ -116,8 +100,7 @@ class Home extends Component {
                                 <CardItem>
                                     <Left>
                                         <Button transparent onPress={() => this.like(uid, index)}>
-                                        {/* {alert(likesthumb)} */}
-                                            <Icon name={value&&value.likedata&&value.likedata[this.props.signin1.uid]?'thumbs-down':'thumbs-up'} />
+                                            <Icon name={value && value.likedata && value.likedata[this.props.signin1.uid] ? 'thumbs-down' : 'thumbs-up'} />
                                             <Text>{value.likes}</Text>
                                         </Button>
                                     </Left>
