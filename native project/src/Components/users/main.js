@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Keyboard, TextInput, BackHandler, StyleSheet, ToastAndroid } from 'react-native';
+import {AppState, Keyboard, TextInput, BackHandler, StyleSheet, ToastAndroid } from 'react-native';
 import CustomHeader from '../header';
 import { Actions } from 'react-native-router-flux'; // New code
 import { connect } from 'react-redux';
@@ -10,6 +10,8 @@ import Ngo from './ngo';
 import Contact from './contact';
 import About from './about';
 import PopupDialog, { slideAnimation } from 'react-native-popup-dialog';
+import PushNotification from 'react-native-push-notification';
+import firebase from 'firebase'
 
 
 class Main extends Component {
@@ -34,6 +36,45 @@ class Main extends Component {
         BackHandler.addEventListener('hardwareBackPress', function () {
             BackHandler.exitApp();
         });
+    }
+
+
+
+    componentDidMount() {
+        AppState.addEventListener('change', this.handleAppStateChange);
+        PushNotification.configure({
+            onNotification: function (notification) {
+                console.log('NOTIFICATION:', notification);
+            }
+        })
+    }
+
+
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.handleAppStateChange)
+    }
+
+
+
+    handleAppStateChange = (AppState) => {
+        if (AppState === 'background') {
+            // console.log('background')
+
+            firebase.database().ref(`/notification/`).on('value', data => {
+                let dbdata = data.val()
+                for (let key in dbdata) {
+                    let notifications = dbdata[key]
+                    // console.log(notifications)
+                    if (notifications) {
+                        PushNotification.localNotificationSchedule({
+                            message: `${notifications.name} Posted in Money Donor`,
+                            date: new Date(Date.now() + (1 * 1000))
+                        });
+                    }
+                }
+            })
+        }
     }
 
     cancel = () => {

@@ -420,7 +420,7 @@ function mapDispatchToProp(dispatch) {
         ngosrequest: () => { dispatch(ngosrequest()) },
         acceptbtnngos: (uid) => { dispatch(acceptbtnngos(uid)) },
         ngospostrequest: () => { dispatch(ngospostrequest()) },
-        ngospostrequestaccpt: (uid, key) => { dispatch(ngospostrequestaccpt(uid, key)) }
+        ngospostrequestaccpt: (uid, key) => { dispatch(ngospostrequestaccpt(uid, key)) },
     })
 }
 

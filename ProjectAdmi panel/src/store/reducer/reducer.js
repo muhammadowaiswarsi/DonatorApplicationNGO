@@ -10,7 +10,7 @@ const INITIAL_STATE = {
     commentdata: [],
     ngosrequest: [],
     ngopostreq: [],
-    ngopostreqkey: []
+    ngopostreqkey: [],
 }
 
 export default (state = INITIAL_STATE, action) => {

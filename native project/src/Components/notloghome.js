@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, Alert } from 'react-native';
+import { BackHandler, StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { Input, Container, Header, Content, Card, CardItem, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux'; // New code
@@ -18,6 +18,9 @@ class notloghome extends Component {
 
 
     componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', function () {
+            BackHandler.exitApp();
+        });
         this.props.getdata()
     }
 
@@ -61,7 +64,7 @@ class notloghome extends Component {
                             return <Card key={index} style={styles.container}>
                                 <CardItem>
                                     <Left>
-                                        <Icon name='contact' style={{fontSize: 40}}/>
+                                        <Icon name='contact' style={{ fontSize: 40 }} />
                                         <Body>
                                             <Text>{value.name}</Text>
                                             <Text note>{value.date}</Text>
@@ -97,12 +100,12 @@ class notloghome extends Component {
                                     <Body>
                                         <Button transparent style={{ width: '120%', marginLeft: '-10%' }} onPress={() => this.comment(uid, index)}>
                                             <Icon name="chatbubbles" />
-                                            <Text style={{marginRight : '8%'}}>Comments</Text>
+                                            <Text style={{ marginRight: '8%' }}>Comments</Text>
                                         </Button>
                                     </Body>
 
 
-                                    <Right style={{marginRight : '-5%'}}>
+                                    <Right style={{ marginRight: '-5%' }}>
                                         <Button transparent onPress={() => alert('Please Login')}>
                                             <Text>
                                                 Donate
@@ -134,7 +137,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProp(state) {
     return ({
-        // signin1: state.root.signin,
         requirmentpost1: state.root.requirmentpost,
         requirmentpostkeys1: state.root.requirmentpostkeys,
 

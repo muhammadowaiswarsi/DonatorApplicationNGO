@@ -13,14 +13,14 @@ import { Container } from 'native-base';
 import * as firebase from 'firebase';
 
 
- // Initialize Firebase
- var config = {
-  apiKey: "AIzaSyCcRM1BZhqvyTsBiQHEar_S07T03h_VOL0",
-  authDomain: "fir-588c0.firebaseapp.com",
-  databaseURL: "https://fir-588c0.firebaseio.com",
-  projectId: "fir-588c0",
-  storageBucket: "fir-588c0.appspot.com",
-  messagingSenderId: "289884235023"
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyCcRM1BZhqvyTsBiQHEar_S07T03h_VOL0",
+    authDomain: "fir-588c0.firebaseapp.com",
+    databaseURL: "https://fir-588c0.firebaseio.com",
+    projectId: "fir-588c0",
+    storageBucket: "fir-588c0.appspot.com",
+    messagingSenderId: "289884235023"
 };
 firebase.initializeApp(config);
 

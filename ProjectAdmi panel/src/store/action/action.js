@@ -120,9 +120,7 @@ export function posts() {
             // console.log(pushkey)
             dispatch({ type: ActionTypes.REQUIRMENTPOSTKEYS, payload: pushkey });
             dispatch({ type: ActionTypes.REQUIRMENTPOST, payload: postarr });
-            // dispatch({ type: ActionTypes.DONATIONMONEY, payload: donationmoney });
         })
-        // })
     }
 }
 
@@ -137,7 +135,8 @@ export function likedata(uid, pushkey) {
                 console.log(data.val())
                 let array = []
                 for (let key in dbdata) {
-                    array.push(dbdata[key])
+                    array.push(dbdata[key].name)
+                    // console.log(dbdata[key].name)
                 }
                 dispatch({ type: ActionTypes.LIKEDATA, payload: array });
             })
@@ -225,10 +224,15 @@ export function ngospostrequestaccpt(uid, key) {
                 let dbdata = data.val()
                 console.log(dbdata)
                 firebase.database().ref(`/users/ngo/${uid}/post/`).push(dbdata)
+                firebase.database().ref(`/notification/${uid}/`).set({ name: dbdata.name })
+                setTimeout(function () {
+                    firebase.database().ref(`/notification/${uid}/`).remove()
+                }, 100);
                 firebase.database().ref(`/admin/ngospostrequest/${uid}/${key}/`).remove()
             })
     }
 }
+
 
 
 export function signout() {

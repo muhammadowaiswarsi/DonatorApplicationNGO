@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { Modal, View, TouchableHighlight, ScrollView, StyleSheet, Alert } from 'react-native';
+import {Modal, View, TouchableHighlight, ScrollView, StyleSheet, Alert } from 'react-native';
 import CustomHeader from '../header';
 import { Input, ActionSheet, Container, Header, Content, Card, CardItem, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux'; // New code
-import { likethumbs, commentcomponent, like, getdatapost, logOutNow, SiginNow, dontionmoneyindex } from '../../store/actions'
+import { commentcomponent, like, getdatapost, logOutNow, SiginNow, dontionmoneyindex } from '../../store/actions'
 import { connect } from 'react-redux';
 import PercentageCircle from 'react-native-percentage-circle';
 import SyncStorage from 'sync-storage';
-import firebase from 'firebase'
-
 
 
 class Home extends Component {
@@ -44,10 +42,8 @@ class Home extends Component {
 
 
 
-
     componentWillMount() {
         this.props.getdata();
-        // this.props.likethumbs()
     }
 
     render() {
@@ -58,8 +54,6 @@ class Home extends Component {
         var DESTRUCTIVE_INDEX = 3;
         var CANCEL_INDEX = 4;
 
-        // console.log(this.props.requirmentpost1)
-
         return (
             <View >
                 <Container style={{ height: 'auto' }}>
@@ -68,7 +62,6 @@ class Home extends Component {
                         this.props.requirmentpost1.map((value, index) => {
                             let donationCircle = Math.floor((value.donation / value.requirementmoney) * 100);
                             let uid = value.uid
-                            console.log(likesk)
 
                             return <Card key={index} style={styles.container}>
                                 <CardItem>
@@ -158,7 +151,8 @@ function mapStateToProp(state) {
         signin1: state.root.signin,
         requirmentpost1: state.root.requirmentpost,
         requirmentpostkeys1: state.root.requirmentpostkeys,
-        donationmoney1: state.root.donationmoney
+        donationmoney1: state.root.donationmoney,
+        notification1: state.root.notification
 
     })
 }

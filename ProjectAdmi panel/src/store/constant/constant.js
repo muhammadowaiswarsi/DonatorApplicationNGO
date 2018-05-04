@@ -9,7 +9,7 @@ const ActionTypes = {
     ERRORSN: 'ERRORSN',
     NGOSREQUEST: 'NGOSREQUEST',
     NGOPOSTREQ: 'NGOPOSTREQ',
-    NGOPOSTREQKEY : 'NGOPOSTREQKEY'
+    NGOPOSTREQKEY : 'NGOPOSTREQKEY',
 }
 
 export default ActionTypes;

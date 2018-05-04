@@ -78,7 +78,7 @@ class Comments extends Component {
                     <View>
                         {this.props.commentcomp1 ?
                             <Content>
-                                <Text style={styles.BodyText}>{this.props.commentcomp1.requirement}</Text>
+                                <Text style={styles.BodyText}>{this.props.commentcomp1.requirement} it is required {value.requirementmoney}</Text>
                             </Content>
                             : null}
                         {
