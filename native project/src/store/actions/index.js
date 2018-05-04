@@ -246,53 +246,50 @@ export function getdatapost() {
 }
 
 
-export function like(uid, pushkey, name) {
+export function like(currentuser, uid, pushkey, name) {
     return dispatch => {
-        // InteractionManager.runAfterInteractions(() => {
-        console.log(pushkey)
-        console.log(uid)
-        firebase.auth().onAuthStateChanged((currentuser) => {
-            firebase.database().ref(`users/ngo/${uid}/post/${pushkey}/`).once('value')
-                .then((data) => {
-                    let dbdata = data.val()
-                    console.log(dbdata)
-                    let like = dbdata.likedata;
-                    let bool = false;
-                    if (like) {
-                        for (let key in like) {
-                            if (currentuser.uid === key) {
-                                console.log(key)
-                                bool = true;
-                                break;
-                            }
+        // console.log(pushkey)
+        // console.log(uid)
+        firebase.database().ref(`users/ngo/${uid}/post/${pushkey}/`).once('value')
+            .then((data) => {
+                let dbdata = data.val()
+                // console.log(dbdata)
+                let like = dbdata.likedata;
+                let bool = false;
+                if (like) {
+                    for (let key in like) {
+                        if (currentuser === key) {
+                            console.log(key)
+                            bool = true;
+                            break;
                         }
                     }
-                    if (bool) {
-                        firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
-                            .then((data1) => {
-                                console.log(data1.val())
-                                let dbdata = data1.val()
-                                let oldlike = dbdata.likes
-                                console.log(oldlike)
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike - 1 })
-                                let likedata1 = dbdata.likedata
-                                console.log(likedata1)
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).remove()
-                            })
-                    } else {
-                        firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
-                            .then((data2) => {
-                                console.log(data2.val())
-                                let dbdata = data2.val()
-                                let oldlike = dbdata.likes
-                                console.log(oldlike)
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike + 1 })
-                                firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser.uid}`).set(name)
-                            })
-                    }
                 }
-                )
-        })
+                if (bool) {
+                    firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
+                        .then((data1) => {
+                            console.log(data1.val())
+                            let dbdata = data1.val()
+                            let oldlike = dbdata.likes
+                            // console.log(oldlike)
+                            firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike - 1 })
+                            let likedata1 = dbdata.likedata
+                            // console.log(likedata1)
+                            firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser}`).remove()
+                        })
+                } else {
+                    firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).once('value')
+                        .then((data2) => {
+                            // console.log(data2.val())
+                            let dbdata = data2.val()
+                            let oldlike = dbdata.likes
+                            // console.log(oldlike)
+                            firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/`).update({ likes: oldlike + 1 })
+                            firebase.database().ref(`/users/ngo/${uid}/post/${pushkey}/likedata/${currentuser}`).set(name)
+                        })
+                }
+            }
+            )
     }
 }
 

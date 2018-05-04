@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal, View, TouchableHighlight, ScrollView, StyleSheet, Alert } from 'react-native';
+import { Modal, View, TouchableHighlight, ScrollView, StyleSheet, Alert } from 'react-native';
 import CustomHeader from '../header';
 import { Input, ActionSheet, Container, Header, Content, Card, CardItem, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux'; // New code
@@ -27,8 +27,9 @@ class Home extends Component {
 
     like = (uid, index) => {
         let name = this.props.signin1.username
+        let currentuser = this.props.signin1.uid
         let key = this.props.requirmentpostkeys1[index]
-        this.props.like(uid, key, name)
+        this.props.like(currentuser, uid, key, name)
     }
 
 
@@ -162,7 +163,7 @@ function mapDispatchToProp(dispatch) {
     return {
         signout: () => { dispatch(logOutNow()) },
         getdata: () => { dispatch(getdatapost()) },
-        like: (uid, key, name) => { dispatch(like(uid, key, name)) },
+        like: (currentuser, uid, key, name) => { dispatch(like(currentuser, uid, key, name)) },
         commentcomponent: (uid, comment) => { dispatch(commentcomponent(uid, comment)) },
         dontionmoneyindex: (uid, index, requirementmoney, donation) => { dispatch(dontionmoneyindex(uid, index, requirementmoney, donation)) },
         // likethumbs: () => { dispatch(likethumbs()) }
